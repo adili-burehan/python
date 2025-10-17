@@ -54,4 +54,3 @@ jobs:
         name: flet-apk
         path: build/apk/
         retention-days: 5
-        
