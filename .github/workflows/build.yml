@@ -8,25 +8,34 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
-    - uses: actions/checkout@v4
-    
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-    
-    - name: Install dependencies
+
+    - name: Install system dependencies
       run: |
-        pip install flet[build]
-    
-    - name: Build APK
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+
+    - name: Install Flet with specific version
       run: |
-        flet build apk --product "我的应用" --bundle-id "com.example.myapp"
-    
+        python -m pip install --upgrade pip
+        pip install "flet[build]>=0.10.0"
+
+    - name: Build Android APK (with timeout)
+      run: |
+        timeout 20m flet build apk --product "我的应用" --bundle-id "com.example.myapp" -v
+      
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: my-app-apk
-        path: build/apk/*.apk
+        name: android-app
+        path: build/apk/
+        retention-days: 7
