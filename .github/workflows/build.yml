@@ -1,0 +1,32 @@
+name: Build Flet APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install flet[build]
+    
+    - name: Build APK
+      run: |
+        flet build apk --product "我的应用" --bundle-id "com.example.myapp"
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: my-app-apk
+        path: build/apk/*.apk
